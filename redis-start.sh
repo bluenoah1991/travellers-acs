@@ -3,6 +3,9 @@
 apt-get install redis-server -y
 /etc/init.d/redis-server stop
 
+mkdir -p /var/lib/redis/6379
+mkdir -p /var/lib/redis/6380
+
 redis-server ./redis-config/6379.conf
 echo 'Service 6379 has been started'
 redis-server ./redis-config/6380.conf
