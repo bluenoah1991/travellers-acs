@@ -3,6 +3,7 @@
 import sys, os
 import json
 import tornado.web
+from tornado_mysql import pools
 import logging
 
 reload(sys)
@@ -11,6 +12,22 @@ sys.setdefaultencoding('utf8')
 import config
 
 logger = logging.getLogger('web')
+
+POOL = None
+
+if config.Mode == 'DEBUG':
+	pools.DEBUG = True
+
+def get_pool():
+	if POOL is not None:
+		return POOL
+	POOL = pools.Pool(
+		dict(unix_socket=config.Mysql_Unix_Socket,
+			user=config.Mysql_User,
+			passwd=config.Mysql_Passwd,
+			db=config.Mysql_DB)
+		)
+	return POOL
 
 def get_file_from_current_dir(_file_, filename):
 	path = os.path.split(os.path.realpath(_file_))[0]
