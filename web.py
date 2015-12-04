@@ -66,14 +66,14 @@ settings = {
 
 routes = [
 	(r"/", DefaultHandler),
-	(r"/api/user/authkey", AccountHandler), # Send AuthKey (POST)(JWT)
-	(r"/api/user/register", AccountHandler), # Register (POST)(JWT)
-	(r"/api/user/login", AccountHandler), # Login (POST)(JWT)
-	(r"/api/user/logout", AccountHandler), # Logout (POST)
-	(r"/api/user/reset", AccountHandler), # Reset password (POST)(JWT)
-	(r"/api/user/forget", AccountHandler), # Forget password (POST)(JWT)
-	(r"/api/user/profile", AccountHandler), # Special account profile (GET/POST)(Public/Private)(JWT)
-	(r"/api/user/avatar", AccountHandler), # Avatar (GET/POST)
+	(r"/api/user/authkey", AuthKeyHandler), # Send AuthKey (POST)(JWT)
+	(r"/api/user/register", RegisterHandler), # Register (POST)(JWT)
+	(r"/api/user/login", LoginHandler), # Login (POST)(JWT)
+	(r"/api/user/logout", LogoutHandler), # Logout (POST)
+	(r"/api/user/reset", ResetHandler), # Reset password (POST)(JWT)
+	(r"/api/user/forget", ForgetHandler), # Forget password (POST)(JWT)
+	(r"/api/user/profile", ProfileHandler), # Special account profile (GET/POST)(Public/Private)(JWT)
+	(r"/api/user/avatar", AvatarHandler), # Avatar (GET/POST)
 ]
 
 if config.Mode == 'DEBUG':

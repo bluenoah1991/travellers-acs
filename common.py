@@ -2,10 +2,15 @@
 
 import sys, os
 import json
+import tornado.web
 import logging
 
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+import config
+
+logger = logging.getLogger('web')
 
 def get_file_from_current_dir(_file_, filename):
 	path = os.path.split(os.path.realpath(_file_))[0]
@@ -19,7 +24,6 @@ def pretty_print(jsonstr):
 		obj = json.loads(jsonstr)
 		prettystr += json.dumps(obj, indent=4, sort_keys=True)
 	except Exception, e:
-		logger = logging.getLogger('web')
 		logger.error('JSON parse failure (Pretty Print)')
 		return jsonstr
 	prettystr += '\r\n'
@@ -31,3 +35,22 @@ def strict_str(str_):
 	str_ = str_.replace('"', '\\"')
 	str_ = str_.strip()
 	return str_
+
+class RequestHandler(tornado.web.RequestHandler):
+
+	def write(self, trunk):
+		if type(trunk) == int:
+			trunk = str(trunk)
+		super(RequestHandler, self).write(trunk)
+
+	def get(self, *args, **kwargs):
+		if config.Mode == 'DEBUG':
+			logger.debug('Request URI: %s (%s)(GET)' % (self.request.uri, self.request.remote_ip))
+		super(RequestHandler, self).get(self, args, kwargs)
+
+	def post(self, *args, **kwargs):
+		if config.Mode == 'DEBUG':
+			logger.debug('Request URI: %s (%s)(POST)' % (self.request.uri, self.request.remote_ip))
+		super(RequestHandler, self).post(self, args, kwargs)
+
+

@@ -13,14 +13,9 @@ import config
 
 logger = logging.getLogger('web')
 
-class AccountHandler(tornado.web.RequestHandler):
+class AuthKeyHandler(common.RequestHandler):
 
 	@tornado.gen.coroutine
-	def get(self):
+	def post(self):
 		pass
-
-	def write(self, trunk):
-		if type(trunk) == int:
-			trunk = str(trunk)
-		super(AccountHandler, self).write(trunk)
 
