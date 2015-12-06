@@ -21,12 +21,17 @@ if config.Mode == 'DEBUG':
 def get_pool():
 	if POOL is not None:
 		return POOL
-	POOL = pools.Pool(
-		dict(unix_socket=config.Mysql_Unix_Socket,
-			user=config.Mysql_User,
-			passwd=config.Mysql_Passwd,
-			db=config.Mysql_DB)
-		)
+	try:
+		global POOL
+		POOL = pools.Pool(
+			dict(unix_socket=config.MySQL_Unix_Socket,
+				user=config.MySQL_User,
+				passwd=config.MySQL_Passwd,
+				db=config.MySQL_DB)
+			)
+	except Exception, e:
+		logger.error('An error occurred while getting the MySQL connection pool: %s' % e)
+		POOL = None
 	return POOL
 
 def get_file_from_current_dir(_file_, filename):

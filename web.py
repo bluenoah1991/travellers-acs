@@ -24,7 +24,7 @@ def deamon(chdir = False):
 		os._exit(1)
 
 def init():
-	WeatherHandler.cache()
+	pass
 
 class DefaultHandler(tornado.web.RequestHandler):
 	def get(self):
