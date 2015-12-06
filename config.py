@@ -9,9 +9,9 @@ Mode = 'DEBUG'
 
 ## MySQL Configuration
 
-MySQL_Unix_Socket = ''
-MySQL_User = ''
-MySQL_Passwd = ''
-MySQL_DB = ''
+MySQL_Unix_Socket = '/var/run/mysqld/mysqld.sock'
+MySQL_User = 'root'
+MySQL_Passwd = '123456'
+MySQL_DB = 'travellers'
 
 

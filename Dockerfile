@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install wget -y
 RUN apt-get install python-pip build-essential python-dev -y
 RUN pip install tornado
 RUN pip install BeautifulSoup4
+RUN pip install Tornado-MySQL
 
 EXPOSE 80
 
