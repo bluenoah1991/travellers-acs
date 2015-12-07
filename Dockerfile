@@ -7,9 +7,11 @@ ADD https://github.com/codemeow5/software/raw/master/ubt_sources_list_aliyun.txt
 RUN apt-get update && apt-get install wget -y
 
 RUN apt-get install python-pip build-essential python-dev -y
+RUN apt-get install mysql-server -y
 RUN pip install tornado
 RUN pip install BeautifulSoup4
 RUN pip install Tornado-MySQL
+RUN pip install redis
 
 EXPOSE 80
 
@@ -20,5 +22,6 @@ COPY common.py /root/
 COPY config.py /root/
 RUN mkdir /root/travellers
 COPY travellers /root/travellers/
-CMD /usr/bin/python /root/web.py -P
+CMD /etc/init.d/mysql restart && \
+	/usr/bin/python /root/web.py
 

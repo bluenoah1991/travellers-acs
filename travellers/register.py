@@ -10,17 +10,13 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class AccountHandler(tornado.web.RequestHandler):
+class RegisterHandler(common.RequestHandler):
 
 	@tornado.gen.coroutine
-	def get(self):
+	def post(self):
 		pass
-
-	def write(self, trunk):
-		if type(trunk) == int:
-			trunk = str(trunk)
-		super(AccountHandler, self).write(trunk)
 

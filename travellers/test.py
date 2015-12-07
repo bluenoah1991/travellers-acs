@@ -21,10 +21,11 @@ class TestHandler(common.RequestHandler):
 		self.write(111)
 		import pdb
 		pdb.set_trace()
-		a = yield MySQLHelper.add_user({
-				'name': 'test1',
-				'password': 'QWERTYUIasdfghj'
-			})
+		#a = yield MySQLHelper.add_user({
+		#		'name': 'test1',
+		#		'password': 'QWERTYUIasdfghj'
+		#	})
+		a = yield MySQLHelper.modify_password('bfb7c38a-9bda-11e5-8ad1-5254001a7787', '123456')
 		pdb.set_trace()
 		self.write(222)
 
