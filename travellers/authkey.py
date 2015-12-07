@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, os, threading
+import sys, os, threading, re
 import tornado.web
 import tornado.gen
 import logging
@@ -18,8 +18,26 @@ logger = logging.getLogger('web')
 class AuthKeyHandler(common.RequestHandler):
 
 	@tornado.gen.coroutine
+	@common.request_log('POST')
+	@common.json_loads_body
 	def post(self):
+		import pdb
+		pdb.set_trace()
+		if self.body_json_object is None:
+			self.exception_handle('Request data format exception, %s' % self.request.uri)
+			return
+		tel = self.body_json_object.get('tel')
+		if tel is None or len(tel) == 0:
+			self.exception_handle('Missing argument \'tel\'')
+			return
+		if not re.match(r'^[1][0-9]{10}$', tel):
+			self.exception_handle('\'tel\' format is not correct')
+			return
 		code = random.randint(100000, 999999)
-		# redis queue
+		# TODO Send SMS message
+		print 'your auth code is %s' % code
+		r = common.get_redis_0()
+		r.set(tel, code, ex=config.AuthCode_ExpireTime)
+		self.write(self.gen_result(0, 'Successfully sent', 'ok'))
+		return
 		
-

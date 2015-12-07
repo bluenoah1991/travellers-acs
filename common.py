@@ -3,7 +3,8 @@
 import sys, os
 import json
 import tornado.web
-from tornado_mysql import pools
+import tornado_mysql.pools
+import redis
 import logging
 
 reload(sys)
@@ -13,17 +14,19 @@ import config
 
 logger = logging.getLogger('web')
 
-POOL = None
+MYSQL_POOL = None
+REDIS_CONNECTIONS_0 = None
+REDIS_CONNECTIONS_1 = None
 
 if config.Mode == 'DEBUG':
-	pools.DEBUG = True
+	tornado_mysql.pools.DEBUG = True
 
-def get_pool():
-	if POOL is not None:
-		return POOL
+def get_mysql_pool():
+	global MYSQL_POOL
+	if MYSQL_POOL is not None:
+		return MYSQL_POOL
 	try:
-		global POOL
-		POOL = pools.Pool(
+		MYSQL_POOL = tornado_mysql.pools.Pool(
 			dict(unix_socket=config.MySQL_Unix_Socket,
 				user=config.MySQL_User,
 				passwd=config.MySQL_Passwd,
@@ -31,8 +34,34 @@ def get_pool():
 			)
 	except Exception, e:
 		logger.error('An error occurred while getting the MySQL connection pool: %s' % e)
-		POOL = None
-	return POOL
+		MYSQL_POOL = None
+	return MYSQL_POOL
+
+def get_redis_0():
+	global REDIS_CONNECTIONS_0
+	if REDIS_CONNECTIONS_0 is not None:
+		return REDIS_CONNECTIONS_0
+	try:
+		REDIS_CONNECTIONS_0 = redis.Redis(
+			unix_socket_path=config.Redis_Unix_Socket,
+			db=0)
+	except Exception, e:
+		logger.error('An error occurred while getting the Redis connection instance: %s' % e)
+		REDIS_CONNECTIONS_0 = None
+	return REDIS_CONNECTIONS_0
+
+def get_redis_1():
+	global REDIS_CONNECTIONS_1
+	if REDIS_CONNECTIONS_1 is not None:
+		return REDIS_CONNECTIONS_1
+	try:
+		REDIS_CONNECTIONS_1 = redis.Redis(
+			unix_socket_path=config.Redis_Unix_Socket,
+			db=1)
+	except Exception, e:
+		logger.error('An error occurred while getting the Redis connection instance: %s' % e)
+		REDIS_CONNECTIONS_1 = None
+	return REDIS_CONNECTIONS_1
 
 def get_file_from_current_dir(_file_, filename):
 	path = os.path.split(os.path.realpath(_file_))[0]
@@ -58,6 +87,26 @@ def strict_str(str_):
 	str_ = str_.strip()
 	return str_
 
+def request_log(method_text):
+	def decorator(func):
+		def wrapper(self, *args, **kwargs):
+			if config.Mode == 'DEBUG':
+				logger.debug(
+				'Request URI: %s (%s)(%s)' % 
+				(self.request.uri, self.request.remote_ip, method_text))
+			return func(self, *args, **kwargs)
+		return wrapper
+	return decorator
+
+def json_loads_body(func):
+	def wrapper(self, *args, **kwargs):
+		try:
+			self.body_json_object = json.loads(self.request.body)
+		except Exception, e:
+			logger.error('JSON parse failure (Request Body)')
+		return func(self, *args, **kwargs)
+	return wrapper
+
 class RequestHandler(tornado.web.RequestHandler):
 
 	def write(self, trunk):
@@ -65,14 +114,27 @@ class RequestHandler(tornado.web.RequestHandler):
 			trunk = str(trunk)
 		super(RequestHandler, self).write(trunk)
 
-	def get(self, *args, **kwargs):
-		if config.Mode == 'DEBUG':
-			logger.debug('Request URI: %s (%s)(GET)' % (self.request.uri, self.request.remote_ip))
-		super(RequestHandler, self).get(self, args, kwargs)
+	def gen_result(self, code, message, result):
+		if result is None:
+			result = '{}'
+		res = '{ '
+		res += '"code": %s, ' % code
+		res += '"message": "%s", ' % message
+		res += '"result": %s' % result
+		res += ' }'
+		return res
 
-	def post(self, *args, **kwargs):
-		if config.Mode == 'DEBUG':
-			logger.debug('Request URI: %s (%s)(POST)' % (self.request.uri, self.request.remote_ip))
-		super(RequestHandler, self).post(self, args, kwargs)
+	def exception_handle(self, message):
+		# TODO missing code
+		logger.error(message)
+		self.write(self.gen_result(-1, message, '{}'))
+		return
 
 
+
+
+
+
+
+
+	

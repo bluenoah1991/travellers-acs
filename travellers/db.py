@@ -33,7 +33,7 @@ class MySQLHelper:
 				'(`id`, `password`, `name`, `tel`, `email`, `deviceid`)'
 				' VALUES '
 				'(%s, %s, %s, %s, %s, %s)')
-		pool = common.get_pool()
+		pool = common.get_mysql_pool()
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
@@ -54,7 +54,7 @@ class MySQLHelper:
 				'`password` = %s'
 				' WHERE '
 				'`id` = %s')
-		pool = common.get_pool()
+		pool = common.get_mysql_pool()
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
@@ -72,7 +72,7 @@ class MySQLHelper:
 			logger.error('Missing argument \'id\'')
 			raise tornado.gen.Return(None)
 		sql_statement = 'SELECT * FROM `users` WHERE `id` = %s'
-		pool = common.get_pool()
+		pool = common.get_mysql_pool()
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
@@ -103,7 +103,7 @@ class MySQLHelper:
 			logger.error('Missing argument \'id\'')
 			raise tornado.gen.Return(None)
 		sql_statement = 'SELECT * FROM `users` WHERE `id` = %s'
-		pool = common.get_pool()
+		pool = common.get_mysql_pool()
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
