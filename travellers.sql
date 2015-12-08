@@ -30,7 +30,8 @@ CREATE TABLE `users` (
   `tel` varchar(64) DEFAULT NULL,
   `email` varchar(64) DEFAULT NULL,
   `deviceid` varchar(64) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tel` (`tel`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-12-06  9:38:33
+-- Dump completed on 2015-12-08 15:26:32

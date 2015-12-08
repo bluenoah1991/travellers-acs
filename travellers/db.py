@@ -63,6 +63,26 @@ class MySQLHelper:
 	
 	@classmethod
 	@tornado.gen.coroutine
+	def modify_password_by_tel(cls, tel, new_password):
+		if tel is None:
+			logger.error('Missing argument \'tel\'')
+			raise tornado.gen.Return(None)
+		if new_password is None or len(new_password) == 0:
+			logger.error('Missing argument \'password\'')
+			raise tornado.gen.Return(None)
+		sql_statement = ('UPDATE `users` SET '
+				'`password` = %s'
+				' WHERE '
+				'`tel` = %s')
+		pool = common.get_mysql_pool()
+		if pool is None:
+			logger.error('Unknown connection pool')
+			raise tornado.gen.Return(None)
+		cur = yield pool.execute(sql_statement, (new_password, tel))
+		raise tornado.gen.Return(cur.rowcount)
+
+	@classmethod
+	@tornado.gen.coroutine
 	def update_profile(cls, profile):# TODO Avatar
 		if profile is None:
 			logger.error('Missing argument \'profile\'')
@@ -108,6 +128,24 @@ class MySQLHelper:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
 		cur = yield pool.execute(sql_statement, (id_,))
+		if cur.rowcount == 0:
+			logger.error('User not found')
+			raise tornado.gen.Return(None)
+		profile = cur.fetchone()
+		raise tornado.gen.Return(profile)
+		
+	@classmethod
+	@tornado.gen.coroutine
+	def fetch_profile_by_tel(cls, tel):
+		if tel is None:
+			logger.error('Missing argument \'tel\'')
+			raise tornado.gen.Return(None)
+		sql_statement = 'SELECT * FROM `users` WHERE `tel` = %s'
+		pool = common.get_mysql_pool()
+		if pool is None:
+			logger.error('Unknown connection pool')
+			raise tornado.gen.Return(None)
+		cur = yield pool.execute(sql_statement, (tel,))
 		if cur.rowcount == 0:
 			logger.error('User not found')
 			raise tornado.gen.Return(None)

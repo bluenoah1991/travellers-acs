@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, os
+import sys, os, uuid
 import json
 import tornado.web
 import tornado_mysql.pools
@@ -17,6 +17,7 @@ logger = logging.getLogger('web')
 MYSQL_POOL = None
 REDIS_CONNECTIONS_0 = None
 REDIS_CONNECTIONS_1 = None
+REDIS_CONNECTIONS_2 = None
 
 if config.Mode == 'DEBUG':
 	tornado_mysql.pools.DEBUG = True
@@ -62,6 +63,19 @@ def get_redis_1():
 		logger.error('An error occurred while getting the Redis connection instance: %s' % e)
 		REDIS_CONNECTIONS_1 = None
 	return REDIS_CONNECTIONS_1
+
+def get_redis_2():
+	global REDIS_CONNECTIONS_2
+	if REDIS_CONNECTIONS_2 is not None:
+		return REDIS_CONNECTIONS_2
+	try:
+		REDIS_CONNECTIONS_2 = redis.Redis(
+			unix_socket_path=config.Redis_Unix_Socket,
+			db=2)
+	except Exception, e:
+		logger.error('An error occurred while getting the Redis connection instance: %s' % e)
+		REDIS_CONNECTIONS_2 = None
+	return REDIS_CONNECTIONS_2
 
 def get_file_from_current_dir(_file_, filename):
 	path = os.path.split(os.path.realpath(_file_))[0]
@@ -115,8 +129,11 @@ class RequestHandler(tornado.web.RequestHandler):
 		super(RequestHandler, self).write(trunk)
 
 	def gen_result(self, code, message, result):
+		# TODO JWT
 		if result is None:
 			result = '{}'
+		if not isinstance(result, basestring) and type(result) <> int:
+			result = json.dumps(result, sort_keys=True)
 		res = '{ '
 		res += '"code": %s, ' % code
 		res += '"message": "%s", ' % message
@@ -130,11 +147,51 @@ class RequestHandler(tornado.web.RequestHandler):
 		self.write(self.gen_result(-1, message, '{}'))
 		return
 
+	def session_set(self, uid):
+		uu = str(uuid.uuid1())
+		r = common.get_redis_1()
+		if r is None:
+			logger.error('Invalid Redis connection')
+			return None
+		try:
+			r.set(uu, uid, ex=config.Cookie_ExpireTime)
+			self.set_secure_cookie('session_id', uu)
+		except Exception, e:
+			logger.error('The database operation failed (Redis.Set)')
+			return None
+		return uu
+
+	def session_rm(self):
+		uu = self.get_secure_cookie('session_id')
+		if uu is None:
+			return
+		r = common.get_redis_1()
+		if r is None:
+			logger.error('Invalid Redis connection')
+			return None
+		try:
+			r.delete(uu)
+			self.set_secure_cookie('session_id', None)
+		except Exception, e:
+			logger.error('The database operation failed (Redis.Set)')
+			return None
+
+	def session_get(self):
+		uu = self.get_secure_cookie('session_id')
+		if uu is None:
+			return
+		r = common.get_redis_1()
+		if r is None:
+			logger.error('Invalid Redis connection')
+			return None
+		try:
+			return r.get(uu)
+		except Exception, e:
+			logger.error('The database operation failed (Redis.Set)')
+			return None
 
 
 
 
 
 
-
-	

@@ -62,17 +62,18 @@ class LogHandler(tornado.web.RequestHandler):
 
 settings = {
 	"static_path": os.path.join(os.path.dirname(__file__), "static"),
+	"cookie_secret": "SAB8LF2sGBflryMb6eXFkX#ou@CNta9V",
 }
 
 routes = [
 	(r"/", DefaultHandler),
 	(r"/test", TestHandler),
 	(r"/api/user/authkey", AuthKeyHandler), # Send AuthKey (POST)(JWT)
-	#(r"/api/user/register", RegisterHandler), # Register (POST)(JWT)
-	#(r"/api/user/login", LoginHandler), # Login (POST)(JWT)
-	#(r"/api/user/logout", LogoutHandler), # Logout (POST)
-	#(r"/api/user/reset", ResetHandler), # Reset password (POST)(JWT)
-	#(r"/api/user/forget", ForgetHandler), # Forget password (POST)(JWT)
+	(r"/api/user/register", RegisterHandler), # Register (POST)(JWT)
+	(r"/api/user/login", LoginHandler), # Login (POST)(JWT)
+	(r"/api/user/logout", LogoutHandler), # Logout (POST)
+	(r"/api/user/reset", ResetHandler), # Reset password (POST)(JWT)
+	(r"/api/user/forget", ForgetHandler), # Forget password (POST)(JWT)
 	#(r"/api/user/profile", ProfileHandler), # Special account profile (GET/POST)(Public/Private)(JWT)
 	#(r"/api/user/avatar", AvatarHandler), # Avatar (GET/POST)
 ]
