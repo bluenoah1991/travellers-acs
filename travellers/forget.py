@@ -20,6 +20,10 @@ class ForgetHandler(common.RequestHandler):
 	@common.request_log('POST')
 	@common.json_loads_body
 	def post(self):
+		if self.body_json_object is None:
+			self.exception_handle(
+				'Request data format exception, %s' % self.request.uri)
+			return
 		tel = self.body_json_object.get('tel')
 		if tel is None or len(tel) == 0:
 			self.exception_handle('Missing argument \'tel\'')
@@ -53,7 +57,7 @@ class ForgetHandler(common.RequestHandler):
                                 'The phone or pin you entered was incorrect. Please try again')
                         return
 		try:
-			rc = MySQLHelper.modify_password_by_tel(tel, request_password)
+			rc = yield MySQLHelper.modify_password_by_tel(tel, request_password)
 		except Exception, e:
 			self.exception_handle('Password change failed (MySQL)')
 		if rc is None or rc == 0:

@@ -7,6 +7,7 @@ from login import LoginHandler
 from logout import LogoutHandler
 from reset import ResetHandler
 from forget import ForgetHandler
+from profile import ProfileHandler
 
 __all__ = [
 	'TestHandler',
@@ -16,4 +17,5 @@ __all__ = [
 	'LogoutHandler',
 	'ResetHandler',
 	'ForgetHandler',
+	'ProfileHandler',
 	]

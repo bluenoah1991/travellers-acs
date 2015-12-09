@@ -133,7 +133,69 @@ class MySQLHelper:
 			raise tornado.gen.Return(None)
 		profile = cur.fetchone()
 		raise tornado.gen.Return(profile)
+
+	@classmethod
+	@tornado.gen.coroutine
+	def fetch_avatar(cls, id_):
+		if id_ is None:
+			logger.error('Missing argument \'id\'')
+			raise tornado.gen.Return(None)
+		sql_statement = 'SELECT `avatar` FROM `users` WHERE `id` = %s'
+		pool = common.get_mysql_pool()
+		if pool is None:
+			logger.error('Unknown connection pool')
+			raise tornado.gen.Return(None)
+		cur = yield pool.execute(sql_statement, (id_,))
+		if cur.rowcount == 0:
+			logger.error('User not found')
+			raise tornado.gen.Return(None)
+		profile = cur.fetchone()
+		if profile is None:
+			logger.error('Specific row not found')
+			raise tornado.gen.Return(None)
+		avatar = profile.get('avatar')
+		raise tornado.gen.Return(avatar)
 		
+	@classmethod
+	@tornado.gen.coroutine
+	def modify_avatar(cls, id_, avatar_base64string):
+		if id_ is None:
+			logger.error('Missing argument \'id\'')
+			raise tornado.gen.Return(None)
+		if avatar_base64string is None or len(avatar_base64string) == 0:
+			logger.error('Missing argument \'avatar_base64string\'')
+			raise tornado.gen.Return(None)
+		sql_statement = ('UPDATE `users` SET '
+				'`avatar` = %s'
+				' WHERE '
+				'`id` = %s')
+		pool = common.get_mysql_pool()
+		if pool is None:
+			logger.error('Unknown connection pool')
+			raise tornado.gen.Return(None)
+		cur = yield pool.execute(sql_statement, (avatar_base64string, id_))
+		raise tornado.gen.Return(cur.rowcount)
+
+	@classmethod
+	@tornado.gen.coroutine
+	def fetch_base_profile(cls, id_):
+		if id_ is None:
+			logger.error('Missing argument \'id\'')
+			raise tornado.gen.Return(None)
+		sql_statement = ('SELECT '
+			'`id`, `name`, `avatar`, `email`'
+			' FROM `users` WHERE `id` = %s')
+		pool = common.get_mysql_pool()
+		if pool is None:
+			logger.error('Unknown connection pool')
+			raise tornado.gen.Return(None)
+		cur = yield pool.execute(sql_statement, (id_,))
+		if cur.rowcount == 0:
+			logger.error('User not found')
+			raise tornado.gen.Return(None)
+		profile = cur.fetchone()
+		raise tornado.gen.Return(profile)
+
 	@classmethod
 	@tornado.gen.coroutine
 	def fetch_profile_by_tel(cls, tel):

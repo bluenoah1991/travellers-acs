@@ -25,13 +25,17 @@ class ResetHandler(common.RequestHandler):
 			self.exception_handle(
 				'Session timeout')
 			return
+		if self.body_json_object is None:
+			self.exception_handle(
+				'Request data format exception, %s' % self.request.uri)
+			return
 		request_password = self.body_json_object.get('password')
 		if request_password is None or len(request_password):
 			self.exception_handle('Missing argument \'password\'')
 			return
 		# TODO Check password format
 		try:
-			rc = MySQLHelper.modify_password(uid, request_password)
+			rc = yield MySQLHelper.modify_password(uid, request_password)
 		except Exception, e:
 			self.exception_handle('Password change failed (MySQL)')
 			return

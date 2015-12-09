@@ -28,7 +28,7 @@ class LoginHandler(common.RequestHandler):
 		if id_ is None or len(id_) == 0:
 			self.exception_handle('Missing argument \'id\'')
 			return
-		user = MySQLHelper.fetch_profile(id_)
+		user = yield MySQLHelper.fetch_profile(id_)
 		if user is None:
 			self.exception_handle('User not found')
 			return

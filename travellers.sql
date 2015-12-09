@@ -26,7 +26,7 @@ CREATE TABLE `users` (
   `id` varchar(128) NOT NULL,
   `password` varchar(60) NOT NULL,
   `name` varchar(64) DEFAULT NULL,
-  `avatar` blob,
+  `avatar` longtext,
   `tel` varchar(64) DEFAULT NULL,
   `email` varchar(64) DEFAULT NULL,
   `deviceid` varchar(64) DEFAULT NULL,
@@ -53,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-12-08 15:26:32
+-- Dump completed on 2015-12-09 14:45:16
