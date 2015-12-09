@@ -27,6 +27,8 @@ class AvatarHandler(RequestHandler):
 			self.exception_handle('Missing argument \'id\'')
 			return
 		avatar = yield MySQLHelper.fetch_avatar(id_)
+		import pdb
+		pdb.set_trace()
 		if avatar is None or len(avatar) == 0:
 			self.exception_handle('Specific avatar not found')
 			return
