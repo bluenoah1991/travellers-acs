@@ -37,7 +37,11 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		yield pool.execute(sql_statement, (id_ , password_, name_, tel_, email_, deviceid_))
+		try:
+			yield pool.execute(sql_statement, (id_ , password_, name_, tel_, email_, deviceid_))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
 		raise tornado.gen.Return(id_)
 
 
@@ -58,7 +62,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (new_password, id_))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (new_password, id_))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		raise tornado.gen.Return(cur.rowcount)
 	
 	@classmethod
@@ -78,7 +89,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (new_password, tel))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (new_password, tel))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		raise tornado.gen.Return(cur.rowcount)
 
 	@classmethod
@@ -106,14 +124,21 @@ class MySQLHelper:
 		email_ = profile.get('email', raw_user.get('email'))
 		deviceid_ = profile.get('deviceid', raw_user.get('deviceid'))
 		sql_statement = ('UPDATE `users` SET '
-				'`name` = %s '
-				'`tel` = %s '
-				'`email` = %s '
+				'`name` = %s, '
+				'`tel` = %s, '
+				'`email` = %s, '
 				'`deviceid` = %s'
 				' WHERE '
 				'`id` = %s')
-		cur = yield pool.execute(sql_statement, 
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, 
 				(name_, tel_, email_, deviceid_, id_))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		raise tornado.gen.Return(cur.rowcount)
 
 	@classmethod
@@ -127,7 +152,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (id_,))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (id_,))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		if cur.rowcount == 0:
 			logger.error('User not found')
 			raise tornado.gen.Return(None)
@@ -145,7 +177,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (id_,))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (id_,))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		if cur.rowcount == 0:
 			logger.error('User not found')
 			raise tornado.gen.Return(None)
@@ -173,7 +212,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (avatar_base64string, id_))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (avatar_base64string, id_))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		raise tornado.gen.Return(cur.rowcount)
 
 	@classmethod
@@ -189,7 +235,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (id_,))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (id_,))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		if cur.rowcount == 0:
 			logger.error('User not found')
 			raise tornado.gen.Return(None)
@@ -207,7 +260,14 @@ class MySQLHelper:
 		if pool is None:
 			logger.error('Unknown connection pool')
 			raise tornado.gen.Return(None)
-		cur = yield pool.execute(sql_statement, (tel,))
+		cur = None
+		try:
+			cur = yield pool.execute(sql_statement, (tel,))
+		except Exception, e:
+			logger.error(e)
+			raise tornado.gen.Return(None)
+		if cur is None:
+			raise tornado.gen.Return(None)
 		if cur.rowcount == 0:
 			logger.error('User not found')
 			raise tornado.gen.Return(None)

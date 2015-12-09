@@ -11,11 +11,12 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from handler import RequestHandler
 from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class AuthKeyHandler(common.RequestHandler):
+class AuthKeyHandler(RequestHandler):
 
 	@tornado.gen.coroutine
 	@common.request_log('POST')

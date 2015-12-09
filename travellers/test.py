@@ -10,11 +10,12 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from handler import RequestHandler
 from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class TestHandler(common.RequestHandler):
+class TestHandler(RequestHandler):
 
 	@tornado.gen.coroutine
 	def get(self):

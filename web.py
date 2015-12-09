@@ -75,7 +75,7 @@ routes = [
 	(r"/api/user/reset", ResetHandler), # Reset password (POST)(JWT)
 	(r"/api/user/forget", ForgetHandler), # Forget password (POST)(JWT)
 	(r"/api/user/profile", ProfileHandler), # Special account profile (GET/POST)(Public/Private)(JWT)
-	#(r"/api/user/avatar", AvatarHandler), # Avatar (GET/POST)
+	(r"/api/user/avatar", AvatarHandler), # Avatar (GET/POST)
 ]
 
 if config.Mode == 'DEBUG':

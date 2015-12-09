@@ -10,11 +10,12 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from handler import RequestHandler
 from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class LoginHandler(common.RequestHandler):
+class LoginHandler(RequestHandler):
 
 	@tornado.gen.coroutine
 	@common.request_log('POST')
@@ -24,11 +25,11 @@ class LoginHandler(common.RequestHandler):
 			self.exception_handle(
 				'Request data format exception, %s' % self.request.uri)
 			return
-		id_ = self.body_json_object.get('id')
-		if id_ is None or len(id_) == 0:
-			self.exception_handle('Missing argument \'id\'')
+		tel = self.body_json_object.get('tel')
+		if tel is None or len(tel) == 0:
+			self.exception_handle('Missing argument \'tel\'')
 			return
-		user = yield MySQLHelper.fetch_profile(id_)
+		user = yield MySQLHelper.fetch_profile_by_tel(tel)
 		if user is None:
 			self.exception_handle('User not found')
 			return
@@ -36,6 +37,8 @@ class LoginHandler(common.RequestHandler):
 		if request_password is None or len(request_password) == 0:
 			self.exception_handle('Missing argument \'password\'')
 			return
+		import pdb
+		pdb.set_trace()
 		password = user.get('password', '')
 		if request_password <> password:
 			self.exception_handle('Incorrect password')
@@ -48,7 +51,7 @@ class LoginHandler(common.RequestHandler):
 		if request_deviceid <> deviceid:
 			self.exception_handle('Incorrect device id')
 			return
-		uu = self.session_set(id_)
+		uu = self.session_set(user.get('id'))
 		if uu is None or len(uu) == 0:
 			self.exception_handle('Session setup failed')
 			return

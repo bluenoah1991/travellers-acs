@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, os, threading
+import sys, os, threading, re
 import tornado.web
 import tornado.gen
 import logging
@@ -10,11 +10,12 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from handler import RequestHandler
 from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class RegisterHandler(common.RequestHandler):
+class RegisterHandler(RequestHandler):
 
 	@tornado.gen.coroutine
 	@common.request_log('POST')
@@ -61,11 +62,12 @@ class RegisterHandler(common.RequestHandler):
 			self.exception_handle(
 				'The phone or pin you entered was incorrect. Please try again')
 			return
+		r.delete(tel)
 		id_ = yield MySQLHelper.add_user(self.body_json_object)
 		if id_ is None:
 			self.exception_handle('The database operation failed (MySQL.AddUser)')
 			return
-		self.body_json_object.id = id_
+		self.body_json_object['id'] = id_
 		self.write(self.gen_result(0, 'Registered success', self.body_json_object))
 		return
 

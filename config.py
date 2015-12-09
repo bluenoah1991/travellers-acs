@@ -19,3 +19,4 @@ MySQL_DB = 'travellers'
 Redis_Unix_Socket = '/var/run/redis/redis-6379.sock'
 
 AuthCode_ExpireTime = 60 * 60 * 10
+Cookie_ExpireTime = 60 * 60 * 24 * 30

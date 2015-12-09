@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, os, threading
+import sys, os, threading, re
 import tornado.web
 import tornado.gen
 import logging
@@ -10,11 +10,12 @@ sys.setdefaultencoding('utf8')
 sys.path.append('..')
 import common
 import config
+from handler import RequestHandler
 from db import MySQLHelper
 
 logger = logging.getLogger('web')
 
-class ForgetHandler(common.RequestHandler):
+class ForgetHandler(RequestHandler):
 
 	@tornado.gen.coroutine
 	@common.request_log('POST')
