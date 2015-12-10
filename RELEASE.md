@@ -22,3 +22,7 @@
 6. 合并原来的update接口和getuser接口为profile接口
 7. getall接口未实现
 8. 位置服务和群组服务未实现
+9. 除avatar的GET外，返回值格式统一为json格式，包含code,message,result字段，成功的code为0，失败的code暂时为-1
+
+    { "code": 0, "message": "Successfully sent", "result": ok }  
+
