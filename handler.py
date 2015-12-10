@@ -48,8 +48,6 @@ class RequestHandler(tornado.web.RequestHandler):
 			logger.error('Invalid Redis connection')
 			return None
 		try:
-			import pdb
-			pdb.set_trace()
 			r.set(uu, uid, ex=config.Cookie_ExpireTime)
 			self.set_secure_cookie('session_id', uu)
 		except Exception, e:
@@ -61,8 +59,6 @@ class RequestHandler(tornado.web.RequestHandler):
 		uu = self.get_secure_cookie('session_id')
 		if uu is None:
 			return
-		import pdb
-		pdb.set_trace()
 		r = common.get_redis_1()
 		if r is None:
 			logger.error('Invalid Redis connection')

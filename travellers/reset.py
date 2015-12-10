@@ -21,8 +21,6 @@ class ResetHandler(RequestHandler):
 	@common.request_log('POST')
 	@common.json_loads_body
 	def post(self):
-		import pdb
-		pdb.set_trace()
 		uid = self.session_get()
 		if uid is None or len(uid) == 0:
 			self.exception_handle(

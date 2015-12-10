@@ -37,8 +37,6 @@ class LoginHandler(RequestHandler):
 		if request_password is None or len(request_password) == 0:
 			self.exception_handle('Missing argument \'password\'')
 			return
-		import pdb
-		pdb.set_trace()
 		password = user.get('password', '')
 		if request_password <> password:
 			self.exception_handle('Incorrect password')

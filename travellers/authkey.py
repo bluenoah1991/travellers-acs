@@ -22,8 +22,6 @@ class AuthKeyHandler(RequestHandler):
 	@common.request_log('POST')
 	@common.json_loads_body
 	def post(self):
-		import pdb
-		pdb.set_trace()
 		if self.body_json_object is None:
 			self.exception_handle(
 				'Request data format exception, %s' % self.request.uri)
