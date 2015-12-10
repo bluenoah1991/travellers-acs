@@ -35,7 +35,8 @@ class AuthKeyHandler(RequestHandler):
 			return
 		code = random.randint(100000, 999999)
 		# TODO Send SMS message
-		print 'your auth code is %s' % code
+		print 'Your auth code is %s' % code
+		logger.debug('Your auth code is %s' % code)
 		r = common.get_redis_0()
 		if r is None:
 			self.exception_handle('Invalid Redis connection')
