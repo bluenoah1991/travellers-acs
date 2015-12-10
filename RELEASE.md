@@ -25,4 +25,3 @@
 9. 除avatar的GET外，返回值格式统一为json格式，包含code,message,result字段，成功的code为0，失败的code暂时为-1
 
     { "code": 0, "message": "Successfully sent", "result": ok }  
-
